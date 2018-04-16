@@ -13,7 +13,7 @@ var jwt = require('jsonwebtoken');
 var router = express.Router();
 
 router.get('/', function(req, res){
-  res.json({ message: 'hooray! welcome to our api!' });
+  res.send('hooray! welcome to our api!');
 });
 
 
@@ -28,18 +28,15 @@ router.post('/', (req, res, next) => {
               jwt: jwt.sign({
                   id: 1,
                   username: req.body.username,
-              }, process.env.JWT_SECRET, { expiresIn: 3600 })
+              },
+              process.env.JWT_SECRET, { expiresIn: 3600 })
             });
         }else{
-          res.status(401).json({
-            message: mess
-          });
+          res.status(401).send(mess);
         }
       });
     }else{
-      res.status(400).json({
-        message: "Connection error, contact support"
-      });
+      res.status(400).send("Connection to the Database error, contact support");
       console.log("Database is down. Restart it and then restart the service");
     }
   });
@@ -56,15 +53,11 @@ router.post('/newuser', (req, res, next) => {
             message: message
           });
         }else{
-          res.status(400).json({
-            message: message
-          });
+          res.status(400).send(message);
         }
       });
     }else{
-      res.status(400).json({
-        message: "Connection error, contact support"
-      });
+      res.status(400).send("Connection error, contact support");
       console.log("Database is down");
     }
   });

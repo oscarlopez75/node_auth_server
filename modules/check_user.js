@@ -4,7 +4,7 @@ var User = require('../models/user.model');
 
 
 var userok = function(username, password, ip, callback){
-  
+
   var message = {};
 
   var query = { username: username };
@@ -13,6 +13,7 @@ var userok = function(username, password, ip, callback){
   .exec()
   .then(function(doc){
     if (doc.length > 0){
+
       if (doc.length > 1){
         let errorMessage = "More than one user for " + username;
         callback(errorMessage, false);
@@ -42,7 +43,6 @@ var userok = function(username, password, ip, callback){
           }
         });
       }
-
 
     }else{
       callback("User " + username + " not found", false);

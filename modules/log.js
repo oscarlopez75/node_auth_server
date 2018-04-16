@@ -8,7 +8,7 @@ var setMessage = function (message) {
     //console.log(message);
   })
   .catch(err => {
-    console.log("Not able to write the log " + message);
+    console.log("Not able to write the log " + message);    
   });
 }
 
