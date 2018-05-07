@@ -16,6 +16,10 @@
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "jsonwebtoken": "^8.2.0",
-    "mongoose": "^5.0.12"
+    "mongoose": "^5.0.12",
+    "swagger-tools": "^0.10.3",
+    "swagger-ui": "^3.14.0",
+    "swagger-ui-express": "^3.0.8",
+    "yamljs": "^0.3.0"
   }
 }

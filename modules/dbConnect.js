@@ -1,8 +1,9 @@
 let mongoose = require('mongoose');
 var log = require('./log');
 
-const server = '127.0.0.1:27017'; // DB SERVER
+const server = process.env.DB_USER + ':' + process.env.DB_PASS + '@ds261929.mlab.com:61929'; // DB SERVER
 const database = 'client'; // YOUR DB NAME
+
 
 class Database {
   constructor() {
@@ -14,10 +15,10 @@ class Database {
   _connect() {
      mongoose.connect("mongodb://" + server + "/" + database)
        .then(() => {
-         console.log('Connection to ' + server + "/" + database +  ' successful')
+         console.log('Connection to ' + database +  ' successful')
        })
        .catch(err => {
-         console.error('Database connection error');         
+         console.error('Database connection error');
        })
   }
 

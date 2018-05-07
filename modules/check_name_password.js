@@ -8,13 +8,13 @@ var validate = function(username, password, callback){
       if (re.test(password)){
         callback("User and password ok", true);
       }else{
-        callback("Bad password", false);
+        callback("New user, Bad password", false);
       }
     }else{
-      callback("User less than 4", false);
+      callback("New user, User less than 4", false);
     }
   }else{
-    callback("User or password missing", false);
+    callback("New user, User or password missing", false);
   }
 };
 

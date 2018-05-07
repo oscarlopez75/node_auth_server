@@ -13,7 +13,7 @@ var jwt = require('jsonwebtoken');
 var router = express.Router();
 
 router.get('/', function(req, res){
-  res.send('hooray! welcome to our api!');
+  res.json({message:"Welcome to the user validation api"});
 });
 
 
@@ -29,14 +29,14 @@ router.post('/', (req, res, next) => {
                   id: 1,
                   username: req.body.username,
               },
-              process.env.JWT_SECRET, { expiresIn: 3600 })
+              process.env.JWT_SECRET, { expiresIn: 30 })
             });
         }else{
-          res.status(401).send(mess);
+          res.status(400).json({message: mess});
         }
       });
     }else{
-      res.status(400).send("Connection to the Database error, contact support");
+      res.status(400).json({message:"Connection to the database error, contact support"});
       console.log("Database is down. Restart it and then restart the service");
     }
   });
@@ -46,21 +46,33 @@ router.post('/', (req, res, next) => {
 router.post('/newuser', (req, res, next) => {
 
   connect.checkCon(function(ready){
+
     if (ready){
-      useradd.useradd(req.body.username, req.body.password, function(message, response){
-        if (response){
-          res.status(200).json({
-            message: message
+      check_user.userok(req.body.username, req.body.password, req.ip, function(mess, found){
+        if (found === true){
+          /*******/
+          useradd.useradd(req.body.addusername, req.body.addpassword,function(message, response){
+            if (response){
+              res.status(200).json({
+                message: message
+              });
+            }else{
+              res.status(400).json({message: message});
+            }
           });
+          /*****/
         }else{
-          res.status(400).send(message);
+          res.status(400).json({message: mess});
         }
       });
+
+
     }else{
-      res.status(400).send("Connection error, contact support");
+      res.status(400).json({message:"Connection to the database error, contact support"});
       console.log("Database is down");
     }
   });
+
 
 });
 
