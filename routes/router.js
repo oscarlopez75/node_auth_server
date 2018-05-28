@@ -27,9 +27,9 @@ router.post('/', (req, res, next) => {
               username: req.body.username,
               jwt: jwt.sign({
                   id: 1,
-                  username: req.body.username,
+                  login: req.body.username,
               },
-              process.env.JWT_SECRET, { expiresIn: 30 })
+              process.env.JWT_SECRET, { expiresIn: 3600 })
             });
         }else{
           res.status(400).json({message: mess});
