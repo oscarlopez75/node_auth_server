@@ -19,60 +19,48 @@ router.get('/', function(req, res){
 
 router.post('/', (req, res, next) => {
 
-  connect.checkCon(function(ready){
-    if (ready){
-      check_user.userok(req.body.username, req.body.password, req.ip, function(mess, found){
-        if (found === true){
-          res.status(200).json({
-              username: req.body.username,
-              jwt: jwt.sign({
-                  id: 1,
-                  login: req.body.username,
-              },
-              process.env.JWT_SECRET, { expiresIn: 3600 })
-            });
-        }else{
-          res.status(400).json({message: mess});
-        }
-      });
-    }else{
-      res.status(400).json({message:"Connection to the database error, contact support"});
-      console.log("Database is down. Restart it and then restart the service");
-    }
-  });
+  connect.checkCon()
+    .then(check_user.userok.bind(null, req.body.username, req.body.password, req.ip))
+    .then(function(){
+      res.status(200).json({
+          username: req.body.username,
+          jwt: jwt.sign({
+              id: 1,
+              login: req.body.username,
+          },
+          process.env.JWT_SECRET, { expiresIn: 3600 })
+        });
+    })
+    .catch(function(err){
+      //console.log("Error from router.js " + err);
+      res.status(400).json({message: err});
+    });
 
 });
 
+
+
+
+
 router.post('/newuser', (req, res, next) => {
 
-  connect.checkCon(function(ready){
-
-    if (ready){
-      check_user.userok(req.body.username, req.body.password, req.ip, function(mess, found){
-        if (found === true){
-          /*******/
-          useradd.useradd(req.body.addusername, req.body.addpassword,function(message, response){
-            if (response){
-              res.status(200).json({
-                message: message
-              });
-            }else{
-              res.status(400).json({message: message});
-            }
+  connect.checkCon()
+    .then(check_user.userok.bind(null, req.body.username, req.body.password, req.ip))
+    .then(function(){
+      useradd.useradd(req.body.addusername, req.body.addpassword,function(message, response){
+        if (response){
+          res.status(200).json({
+            message: message
           });
-          /*****/
         }else{
-          res.status(400).json({message: mess});
+          res.status(400).json({message: message});
         }
       });
-
-
-    }else{
-      res.status(400).json({message:"Connection to the database error, contact support"});
-      console.log("Database is down");
-    }
-  });
-
+    })
+    .catch(function(err){
+      //console.log("Error from router.js " + err);
+      res.status(400).json({message: err});
+    });
 
 });
 

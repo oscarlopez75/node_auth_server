@@ -24,8 +24,14 @@ class Database {
 
 }
 
-var checkCon = function(callback) {
-  callback(mongoose.connection.readyState);
+var checkCon = function() {
+  return new Promise((resolve, reject) => {
+    if(mongoose.connection.readyState){
+      resolve();
+    }else{
+      reject('No database connection. please check with support');
+    }
+  });
 };
 
 module.exports = new Database()

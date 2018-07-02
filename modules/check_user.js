@@ -2,62 +2,62 @@ var log = require('./log.js');
 var User = require('../models/user.model');
 
 
+var userok = function(username, password, ip){
+  return new Promise((resolve, reject) => {
+    var message = {};
 
-var userok = function(username, password, ip, callback){
+    var query = { username: username };
 
-  var message = {};
+    User.find(query)
+    .exec()
+    .then(function(doc){
+      if (doc.length > 0){
 
-  var query = { username: username };
+        if (doc.length > 1){
+          let errorMessage = "More than one user for " + username;
+          reject(errorMessage);
+          message = {
+            script: 'check_user',
+            errorMessage: errorMessage
+          };
+          log.setMessage(message);
+        }else{
+          var compare = require('./pass_comp');
 
-  User.find(query)
-  .exec()
-  .then(function(doc){
-    if (doc.length > 0){
+          compare.checkit(password, doc[0].password, function(mess, result){
+            if (result){
+              resolve();
+              message = {
+                script: 'check_user',
+                errorMessage: "User " + username + " login"
+              };
+              log.setMessage(message);
+            }else{
+              reject(mess);
+              message = {
+                script: 'check_user',
+                errorMessage: username + " " + mess
+              };
+              log.setMessage(message);
+            }
+          });
+        }
 
-      if (doc.length > 1){
-        let errorMessage = "More than one user for " + username;
-        callback(errorMessage, false);
-        message = {
+      }else{
+        reject("User " + username + " not found");
+        var message = {
           script: 'check_user',
-          errorMessage: errorMessage
+          errorMessage: username + " does not exist"
         };
         log.setMessage(message);
-      }else{
-        var compare = require('./pass_comp');
-
-        compare.checkit(password, doc[0].password, function(mess, result){
-          if (result){
-            callback(mess, result);
-            message = {
-              script: 'check_user',
-              errorMessage: "User " + username + " login"
-            };
-            log.setMessage(message);
-          }else{
-            callback(mess, false);
-            message = {
-              script: 'check_user',
-              errorMessage: username + " " + mess
-            };
-            log.setMessage(message);
-          }
-        });
       }
-
-    }else{
-      callback("User " + username + " not found", false);
-      var message = {
-        script: 'check_user',
-        errorMessage: username + " does not exist"
-      };
-      log.setMessage(message);
-    }
-  })
-  .catch((err) => {
-    callback("Error querying database", false);
-    console.log(err);
+    })
+    .catch((err) => {
+      reject("Error querying database");
+      console.log(err);
+    });
   });
-};
+}
 
 
 
