@@ -1,14 +1,15 @@
 var User       = require('../models/user.model');
 const mongoose = require('mongoose');
 
-var insert_user = function(username, password, callback){
+var insert_user = function(username, password, role, callback){
 
   const user = new User({
     username: username,
-    password: password
+    password: password,
+    role: role
   });
 
-  user.save()  
+  user.save()
   .then(result => {
     callback("User created", true);
   })

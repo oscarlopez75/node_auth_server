@@ -26,7 +26,7 @@ var userok = function(username, password, ip){
 
           compare.checkit(password, doc[0].password, function(mess, result){
             if (result){
-              resolve();
+              resolve(doc[0].role);
               message = {
                 script: 'check_user',
                 errorMessage: "User " + username + " login"
